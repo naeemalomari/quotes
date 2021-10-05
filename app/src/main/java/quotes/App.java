@@ -23,7 +23,7 @@ public class App {
         Type quotesArrayList = new TypeToken<ArrayList<quotes.Quotes>>() {}.getType();
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        ArrayList<Quotes> بطيخ = gson.fromJson(reader, quotesArrayList);
-    return بطيخ;
+        ArrayList<Quotes> converter = gson.fromJson(reader, quotesArrayList);
+    return converter;
     }
 }
