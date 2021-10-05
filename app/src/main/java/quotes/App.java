@@ -15,7 +15,7 @@ public class App {
     public static void main(String[] args) throws IOException {
         System.out.println("hello");
         int value =new Random().nextInt(readFile().size()-1);
-        System.out.println(value);
+        System.out.println(value + "    This is the index");
         System.out.println(readFile().get(value).toString());
     }
     public static ArrayList<Quotes> readFile() throws IOException {
