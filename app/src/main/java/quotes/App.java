@@ -12,14 +12,16 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Random;
 public class App {
-    public static void main(String[] args) throws IOException {
+    public  static void main(String[] args) throws IOException {
+
         System.out.println("hello");
-        int value =new Random().nextInt(readFile().size()-1);
-        System.out.println(value + "    This is the index");
-        System.out.println(readFile().get(value).toString());
+//        int value =new Random().nextInt(readFile().size()-1);
+//        System.out.println(value + "    This is the index");
+        System.out.println(readFile().get(100).toString());
     }
     public static ArrayList<Quotes> readFile() throws IOException {
-        BufferedReader reader =new BufferedReader(new FileReader("./app/src/main/resources/recentquotes.json"));
+        String path= "./app/src/main/resources/recentquotes.json";
+        BufferedReader reader =new BufferedReader(new FileReader(path));
         Type quotesArrayList = new TypeToken<ArrayList<quotes.Quotes>>() {}.getType();
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
