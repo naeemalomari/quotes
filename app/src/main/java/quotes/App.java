@@ -3,8 +3,37 @@
  */
 package quotes;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Random;
+
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("hello");
+        int value =new Random().nextInt(readFile().size()-1);
+        System.out.println(value);
+        System.out.println(readFile().get(value).toString());
     }
+
+    public static ArrayList<Quotes> readFile() throws IOException {
+
+        BufferedReader reader =new BufferedReader(new FileReader("./app/src/main/resources/recentquotes.json"));
+        Type quotesArrayList = new TypeToken<ArrayList<quotes.Quotes>>() {}.getType();
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        ArrayList<Quotes> بطيخ = gson.fromJson(reader, quotesArrayList);
+    return بطيخ;
+    }
+
 }
