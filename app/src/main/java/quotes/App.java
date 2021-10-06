@@ -3,6 +3,7 @@
  */
 package quotes;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,61 +13,94 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class App {
 
-    public static ArrayList<Quotes> readFile() throws IOException {
-        String path = "./app/src/main/resources/recentquotes.json";
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        Type quotesArrayList = new TypeToken<ArrayList<quotes.Quotes>>() {
-        }.getType();
+    public static void main(String[] args) throws IOException {
+
+        ArrayList<Quotes> quotes = jsonParser();
+        int random = new Random().nextInt(quotes.size());
+        System.out.println("The quotes list size after adding ===> " + quotes.size());
+
+        System.out.println("Random quote == > " + quotes.get(random));
+
+    }
+
+    public static ArrayList<Quotes> jsonParser() throws IOException {
+
+        //HTTP REQUESTING HERE
+        URL url = new URL("http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.setConnectTimeout(5000);
+        con.setReadTimeout(5000);
+        int responseCode = con.getResponseCode();
+
+        Type array = new TypeToken<ArrayList<Quotes>>() {}.getType();
+
+        // IF THE REQUEST IS SUCCESSFUL OR NOT
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+
+            InputStreamReader inputStreamReader = new InputStreamReader(con.getInputStream());
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String data = bufferedReader.readLine();
+            bufferedReader.close();
+
+            Gson gson = new Gson();
+            QuotesAPI webQuote = gson.fromJson(data, QuotesAPI.class);
+            Quotes newQuote = new Quotes(webQuote.getQuoteAuthor(), webQuote.getSenderName());
+
+            // Bring all the quotes from the json file and add the new quote to it then write the whole thing again
+            ArrayList<Quotes> listList = jsonParserLocal();
+            System.out.println("The quotes list size before adding ===> " + listList.size());
+            listList.add(newQuote);
+            App.fileWriter(listList);
+
+            return listList;
+        } else {
+
+
+            BufferedReader reader = new BufferedReader(new FileReader("app/src/main/resources/recentquotes.json"));
+
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+
+            ArrayList<Quotes> list = gson.fromJson(reader, array);
+            reader.close();
+            return list;
+
+        }
+
+
+    }
+
+    private static void fileWriter(ArrayList<Quotes> list) throws IOException {
+
+        Writer fileWriter = new FileWriter("app/src/main/resources/recentquotes.json");
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        ArrayList<Quotes> converter = gson.fromJson(reader, quotesArrayList);
-        return converter;
-    }
 
-    public static void main(String[] args) throws IOException {
-//        int value =new Random().nextInt(readFile().size()-1);
-//        System.out.println(value + "    This is the index");
-//        System.out.println(readFile().get(value).toString());
-        System.out.println("Welcome to the Web");
-        // MalformedURLException and FileNoFoundException inherit from IOException
-        String url = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            // HTTP CONNECT VERB
-            // DELETE PUT POST GET OPTIONS HEAD PATCH
-            //connection.setRequestMethod("GET");
-            System.out.println(connection);
-            InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            // this data is the JSON
-            String data = bufferedReader.readLine();
-            System.out.println(data);
-            bufferedReader.close();
-            Gson gson = new Gson();
-            QuotesAPI quotesApi = gson.fromJson(data, QuotesAPI.class);
-            System.out.println(" My QUOTES  >>>\n               >>>" + quotesApi.quoteText);
+        gson.toJson(list, fileWriter);
+        fileWriter.close();
 
-            BufferedWriter add = new BufferedWriter(new FileWriter("./app/src/main/resources/recentquotes.json", false));
-            QuotesAPI qutApi = gson.fromJson(bufferedReader, QuotesAPI.class);
-            Quotes quotLocal = new Quotes(null, qutApi.getQuoteAuthor(), null, qutApi.getQuoteText());
-            Quotes.add(quotLocal);
-            gson = gson.newBuilder().setPrettyPrinting().create();
-
-
-            System.out.println("Quote from API: " + quotLocal);
-            add.write(gson.toJson(Quotes.class));
-            add.close();
-        } else {
-            System.out.println("Request unable to processed");
-        }
     }
 
 
+    public static ArrayList<Quotes> jsonParserLocal() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("app/src/main/resources/recentquotes.json"));
+
+        Type array = new TypeToken<ArrayList<Quotes>>() {
+        }.getType();
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        ArrayList<Quotes> list = gson.fromJson(reader, array);
+        reader.close();
+        return list;
+
+    }
 
 }

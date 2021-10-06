@@ -12,6 +12,9 @@ public class Quotes {
         this.tags = tags;
     }
 
+    public Quotes(String quoteAuthor, String senderName) {
+    }
+
 
     public String getAuthor() {
         return author;
