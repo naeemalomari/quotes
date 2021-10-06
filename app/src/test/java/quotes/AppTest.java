@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
-    @Test void appHasAGreeting(){
-            try {
-                ArrayList<Quotes> quotes = App.readFile();
-                assertEquals(" ““The ''wealth'' of a good heard is SO much better than a thousand beautiful faces.” ”Vasso Charalambous", quotes.get(100).toString());
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+//    @Test void appHasAGreeting(){
+//            try {
+//                ArrayList<Quotes> quotes = App.readFile();
+//                assertEquals(" ““The ''wealth'' of a good heard is SO much better than a thousand beautiful faces.” ”Vasso Charalambous", quotes.get(100).toString());
+//            } catch (IOException e) {
+//                System.out.println(e.getMessage());
+//            }
+//        }
 }
