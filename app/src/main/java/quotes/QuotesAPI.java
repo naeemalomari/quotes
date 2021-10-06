@@ -1,11 +1,11 @@
 package quotes;
 
-public class API {
+public class QuotesAPI {
     String quoteText;
     String quoteAuthor;
     String quoteLink;
 
-    public API(String quoteText, String quoteAuthor, String quoteLink) {
+    public QuotesAPI(String quoteText, String quoteAuthor, String quoteLink) {
         this.quoteText = quoteText;
         this.quoteAuthor = quoteAuthor;
         this.quoteLink = quoteLink;
